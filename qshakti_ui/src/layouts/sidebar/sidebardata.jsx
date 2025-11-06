@@ -12,6 +12,7 @@ import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import PlayCircleOutlineIcon from "@mui/icons-material/PlayCircleOutline";
 import CloudUploadOutlinedIcon from "@mui/icons-material/CloudUploadOutlined";
 import SupportIcon from "@mui/icons-material/Support";
+import SmartToyIcon from "@mui/icons-material/SmartToy";
 
 // Step 1: Get the role safely from sessionStorage
 
