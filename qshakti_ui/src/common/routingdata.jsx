@@ -60,6 +60,10 @@ const OrderDetails = React.lazy(() =>
 const OrderManage = React.lazy(() =>
   import("../modules/Supervisor/Order Management/OrderManagement")
 );
+// Chatbot component - Quality Insights Chatbot for querying production and inspection data
+const Chatbot = React.lazy(() =>
+  import("../modules/Chatbot/Chatbot")
+);
 export const Routingdata = [
   {
     path: "uploadfile",
