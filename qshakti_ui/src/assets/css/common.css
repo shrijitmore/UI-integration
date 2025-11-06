@@ -1,0 +1,153 @@
+/* Back button */
+/* Common Styles for Buttons */
+.button-base {
+  border-radius: 8px !important;
+  text-transform: none !important;
+  font-weight: 500 !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.button-base:hover {
+  background: #048da7 !important;
+}
+
+.button-outline {
+  margin-right: 12px !important;
+  color: #00accd !important;
+  border: 2px solid #00accd !important;
+}
+
+.button-outline:hover {
+  background: #00accd !important;
+  color: white !important;
+}
+
+.button-outline:hover {
+  background: #00accd !important;
+  color: white !important;
+  border: 2px solid #00accd !important;
+}
+
+.button-outline:focus,
+.button-outline:active,
+.button-outline:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+  background: #00accd !important;
+  color: white !important;
+}
+
+.button-contained {
+  margin-right: 12px !important;
+  background: #00accd !important;
+  color: white !important;
+  font-weight: 600 !important;
+}
+
+.button-contained:hover {
+  background: #048da7 !important;
+}
+
+.button-submit {
+  background: #00accd !important;
+  color: white !important;
+  font-weight: 500 !important;
+}
+
+.button-submit:hover {
+  background: #048da7 !important;
+}
+
+.button-startIcon,
+.button-endIcon {
+  display: flex !important;
+  align-items: center !important;
+}
+
+.button-icon-left {
+  position: relative !important;
+  top: 1px !important;
+}
+
+.button-icon-right {
+  position: relative !important;
+  top: 1px !important;
+  left: 6px !important;
+  font-weight: 900 !important;
+}
+
+.blinking-badge {
+  animation: blink 1.2s infinite !important;
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1 !important;
+  }
+  50% {
+    opacity: 0.4 !important;
+  }
+}
+
+.commonButton {
+  /* background: linear-gradient(135deg, #daa520, #b8860b) !important; */
+  background: #00accd !important;
+  color: whitesmoke !important;
+  transition: background 0.3s ease !important;
+}
+
+.commonButton:hover {
+  background: #01849d !important;
+  /* box-shadow: 0 8px 25px rgba(218, 165, 32, 0.4) !important; */
+  /* border-color: #daa520 !important; */
+  color: whitesmoke !important;
+}
+
+.deleteButton {
+  background: #d15252 !important;
+  color: whitesmoke !important;
+  transition: background 0.3s ease !important;
+}
+
+.deleteButton:hover {
+  background: #c42020 !important;
+  color: #ffffff !important;
+}
+
+.applyButton:hover {
+  background: #3c64c0 !important;
+  color: #ffffff !important;
+}
+
+/* .commonAdd {
+  background: #62db5e !important;
+  color: whitesmoke !important;
+  transition: background 0.3s ease !important;
+}
+
+.commonAdd:hover {
+  background: #3caa2d !important;
+  color: whitesmoke !important;
+} */
+.commonAdd {
+  background: rgb(3, 128, 3) !important;
+  color: whitesmoke !important;
+  transition: background 0.3s ease !important;
+}
+
+.commonAdd:hover {
+  background: rgb(1, 108, 1) !important;
+  color: whitesmoke !important;
+}
+
+.cancelButton:hover {
+  background-color: #dc2727 !important;
+  color: whitesmoke !important;
+}
+
+.cancelButton {
+  width: 35%;
+  transition: background 0.3s ease !important;
+}
