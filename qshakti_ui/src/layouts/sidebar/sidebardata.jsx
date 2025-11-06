@@ -224,6 +224,16 @@ const allItems = [
     module: "Order Management",
     // showOnlyForAdmin: true,
   },
+  {
+    icon: <SmartToyIcon className="side-menu__icon " />,
+    type: "link",
+    path: `${import.meta.env.BASE_URL}chatbot`,
+    active: false,
+    selected: false,
+    title: "CHATBOT",
+    key: "chatbot",
+    module: "Dashboard",
+  },
 ];
 
 const MenuItems = [
