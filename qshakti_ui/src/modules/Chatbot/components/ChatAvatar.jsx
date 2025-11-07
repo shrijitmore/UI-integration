@@ -19,18 +19,25 @@ const ChatAvatar = ({ role }) => {
   return (
     <Avatar
       sx={{
-        width: 36,
-        height: 36,
-        bgcolor: role === 'bot' ? 'primary.main' : 'secondary.main',
-        border: '2px solid',
+        width: 42,
+        height: 42,
+        bgcolor: role === 'bot' 
+          ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+          : 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+        border: '3px solid',
         borderColor: 'background.paper',
-        boxShadow: 1
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+        transition: 'all 0.3s ease',
+        '&:hover': {
+          transform: 'scale(1.1)',
+          boxShadow: '0 6px 16px rgba(0, 0, 0, 0.2)',
+        },
       }}
     >
       {role === 'bot' ? (
-        <SmartToyIcon sx={{ fontSize: 20 }} />
+        <SmartToyIcon sx={{ fontSize: 22, color: 'white' }} />
       ) : (
-        <PersonIcon sx={{ fontSize: 20 }} />
+        <PersonIcon sx={{ fontSize: 22, color: 'white' }} />
       )}
     </Avatar>
   );

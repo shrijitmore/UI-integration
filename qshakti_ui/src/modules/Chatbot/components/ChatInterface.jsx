@@ -11,7 +11,7 @@
  */
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Box, Button, TextField, Alert } from '@mui/material';
+import { Box, Button, TextField, Alert, Typography } from '@mui/material';
 import ChatMessages from './ChatMessages';
 import TableDisplay from './TableDisplay';
 import ChartDisplay, { RunChartStats } from './ChartDisplay';
@@ -86,20 +86,51 @@ const NumericInput = ({ options, onSubmit, onError }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} style={{ display: 'flex', gap: '8px' }}>
+    <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', gap: 1.5, mb: 1 }}>
       <TextField
         type="text"
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}
-        placeholder="Type number here..."
-        size="small"
+        placeholder="Type option number here..."
+        size="medium"
         fullWidth
         data-testid="numeric-input"
+        sx={{
+          '& .MuiOutlinedInput-root': {
+            borderRadius: 2,
+            bgcolor: 'background.paper',
+            '&:hover': {
+              '& .MuiOutlinedInput-notchedOutline': {
+                borderColor: 'primary.main',
+              },
+            },
+          },
+        }}
       />
-      <Button type="submit" variant="contained" size="small" data-testid="numeric-submit-btn">
+      <Button
+        type="submit"
+        variant="contained"
+        size="medium"
+        data-testid="numeric-submit-btn"
+        sx={{
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          color: 'white',
+          borderRadius: 2,
+          px: 3,
+          textTransform: 'none',
+          fontWeight: 600,
+          boxShadow: '0 2px 8px rgba(102, 126, 234, 0.3)',
+          transition: 'all 0.2s ease',
+          '&:hover': {
+            background: 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)',
+            boxShadow: '0 4px 12px rgba(102, 126, 234, 0.4)',
+            transform: 'translateY(-2px)',
+          },
+        }}
+      >
         Submit
       </Button>
-    </form>
+    </Box>
   );
 };
 
@@ -200,41 +231,62 @@ const ChatInterface = () => {
       });
 
       const content = (
-        <div>
-          <p style={{ marginBottom: '16px' }}>{text}</p>
+        <Box>
+          <Typography variant="body1" sx={{ mb: 2, color: 'text.primary', lineHeight: 1.6, fontSize: '0.9375rem' }}>
+            {text}
+          </Typography>
           {options && handler && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              {/* Show text input for numeric options */}
-              {isNumericOptions && (
-                <NumericInput
-                  options={options}
-                  onSubmit={handler}
-                  onError={(msg) => setErrorMessage(msg)}
-                />
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+            {/* Show text input for numeric options */}
+            {isNumericOptions && (
+              <NumericInput
+                options={options}
+                onSubmit={handler}
+                onError={(msg) => setErrorMessage(msg)}
+              />
+            )}
+            {/* Always show option buttons */}
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5, mt: 1 }}>
+              {options.length > 0 ? (
+                options.map((opt) => (
+                  <Button
+                    key={opt.value}
+                    variant="contained"
+                    size="medium"
+                    onClick={() => handler(opt)}
+                    data-testid={`option-${opt.value}`}
+                    sx={{
+                      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                      color: 'white',
+                      borderRadius: 2,
+                      px: 2.5,
+                      py: 1,
+                      textTransform: 'none',
+                      fontWeight: 500,
+                      boxShadow: '0 2px 8px rgba(102, 126, 234, 0.3)',
+                      transition: 'all 0.2s ease',
+                      '&:hover': {
+                        background: 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)',
+                        boxShadow: '0 4px 12px rgba(102, 126, 234, 0.4)',
+                        transform: 'translateY(-2px)',
+                      },
+                      '&:active': {
+                        transform: 'translateY(0)',
+                      },
+                    }}
+                  >
+                    {opt.label}
+                  </Button>
+                ))
+              ) : (
+                <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.875rem' }}>
+                  No options available
+                </Typography>
               )}
-              {/* Always show option buttons */}
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                {options.length > 0 ? (
-                  options.map((opt) => (
-                    <Button
-                      key={opt.value}
-                      variant="outlined"
-                      size="small"
-                      onClick={() => handler(opt)}
-                      data-testid={`option-${opt.value}`}
-                    >
-                      {opt.label}
-                    </Button>
-                  ))
-                ) : (
-                  <p style={{ fontSize: '0.875rem', color: 'text.secondary' }}>
-                    No options available
-                  </p>
-                )}
-              </div>
-            </div>
+            </Box>
+            </Box>
           )}
-        </div>
+        </Box>
       );
       addMessage('bot', content);
       // Call onComplete callback after message is added

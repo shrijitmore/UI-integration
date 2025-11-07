@@ -63,8 +63,8 @@ const ChatMessages = ({ messages, isBotTyping, className }) => {
         },
       }}
     >
-      <Box sx={{ maxWidth: '1200px', mx: 'auto', px: { xs: 2, sm: 3, lg: 4 }, py: 3 }}>
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+      <Box sx={{ maxWidth: '1200px', mx: 'auto', px: { xs: 2, sm: 3, lg: 4 }, py: 4 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
           {messages.map((message) => (
             <Box
               key={message.id}
@@ -92,12 +92,31 @@ const ChatMessages = ({ messages, isBotTyping, className }) => {
                   <Box
                     sx={{
                       borderRadius: 3,
-                      bgcolor: 'primary.main',
-                      px: 2,
+                      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                      px: 2.5,
                       py: 1.5,
                       fontSize: '0.875rem',
-                      color: 'primary.contrastText',
-                      boxShadow: 2,
+                      color: 'white',
+                      boxShadow: '0 4px 12px rgba(102, 126, 234, 0.3)',
+                      position: 'relative',
+                      overflow: 'visible',
+                      '&::after': {
+                        content: '""',
+                        position: 'absolute',
+                        right: -8,
+                        top: 20,
+                        width: 0,
+                        height: 0,
+                        borderTop: '8px solid transparent',
+                        borderBottom: '8px solid transparent',
+                        borderLeft: '8px solid',
+                        borderLeftColor: '#667eea',
+                      },
+                      transition: 'all 0.2s ease',
+                      '&:hover': {
+                        boxShadow: '0 6px 16px rgba(102, 126, 234, 0.4)',
+                        transform: 'translateY(-2px)',
+                      },
                     }}
                   >
                     {message.content}

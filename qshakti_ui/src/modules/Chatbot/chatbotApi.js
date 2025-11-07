@@ -20,14 +20,17 @@
 import axios from 'axios';
 
 // Base URL for the backend API
-const API_BASE_URL = 'https://demo-qshakti.c4i4.org/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+console.log('API_BASE_URL', API_BASE_URL);
 
 /**
  * Get authentication token from session storage
  * @returns {string} Authentication token
  */
 const getAuthToken = () => {
-  return sessionStorage.getItem('token') || '';
+  const token = sessionStorage.getItem('token');
+  console.log('Retrieved token for auth header:', token);
+  return token || '';
 };
 
 /**
@@ -160,7 +163,14 @@ export const getItems = async (factoryId, sectionId) => {
  */
 export const getPurchaseOrders = async (factoryId, itemCode = null) => {
   try {
-    const response = await axiosInstance.get('/master/po_no_dropdown/');
+    const url = `${import.meta.env.VITE_API_URL}master/po_no_dropdown/`;
+    console.log('Requesting URL:', url);
+    const response = await axios.get(url, {
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${getAuthToken()}`
+        }
+    });
     
     if (response.data && response.data.data) {
       let orders = [];
@@ -178,7 +188,7 @@ export const getPurchaseOrders = async (factoryId, itemCode = null) => {
       }
       
       return orders.map(order => ({
-        label: `${order.order_number} - ${order.lot_number || 'N/A'}`,
+        label: `${order.order_number} - ${order.lot_number || 'N/A'} `,
         value: order.order_number
       }));
     }

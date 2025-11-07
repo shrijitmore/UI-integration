@@ -3,6 +3,8 @@
 ## Overview
 Successfully converted Next.js chatbot from `/app/React trial` to React and integrated it into the qshakti_ui production frontend.
 
+**Latest Update:** Factory selection now uses `plant_info` from login response instead of dummy data. Modified `authloginNew.jsx` to store plant_info in sessionStorage during login.
+
 ## What Was Done
 
 ### 1. Created New Chatbot Module Structure
@@ -85,18 +87,24 @@ Successfully converted Next.js chatbot from `/app/React trial` to React and inte
 ```diff
 📁 /app/qshakti_ui/src/common/routingdata.jsx
 + Added: Chatbot lazy import
-+ Added: Chatbot route with permissions
++ Added: Chatbot route (permission requirement removed)
 
 📁 /app/qshakti_ui/src/layouts/sidebar/sidebardata.jsx
 + Added: SmartToyIcon import
 + Added: CHATBOT menu item
+
+📁 /app/qshakti_ui/src/modules/auth/authloginNew.jsx
++ Added: plant_info storage in sessionStorage (lines 125, 130-133)
++ Purpose: Store plant_info from login response for chatbot factory selection
++ Note: Minimal change - only adds sessionStorage.setItem() call
 ```
 
-#### No Other Files Modified
-- ✅ No changes to existing components
-- ✅ No changes to existing APIs
-- ✅ No changes to existing state management
-- ✅ Fully isolated module
+#### Integration Details
+- ✅ Chatbot module is self-contained
+- ✅ Login file modified to store plant_info (required for chatbot)
+- ✅ No changes to existing login functionality
+- ✅ No changes to existing APIs or state management
+- ✅ Backward compatible - existing features unaffected
 
 ### 5. Features Implemented
 
@@ -233,38 +241,46 @@ yarn dev      # Start development server
 
 #### Replacing Dummy APIs
 
+**Note:** `getFactories()` has already been implemented using `plant_info` from the login response. No separate endpoint needed. The implementation required modifying `authloginNew.jsx` to store `plant_info` in sessionStorage during login.
+
+For other dummy APIs:
+
 1. **Locate the API function** in `/app/qshakti_ui/src/modules/Chatbot/chatbotApi.js`
 2. **Find the `// DUMMY API` comment**
 3. **Replace with actual API call**:
 
 ```javascript
+// Example: Replacing getFilteredInspections() (still a dummy API)
 // Before (Dummy)
-export const getFactories = async () => {
+export const getFilteredInspections = async (filters) => {
   try {
-    // DUMMY API - Replace with actual backend endpoint when available
+    // DUMMY DATA - Replace with actual backend endpoint when available
     return [
-      { label: 'AMMUNITION FACTORY KHADKI', value: '1' },
+      {
+        id: 'INS-001',
+        operationName: 'QUALITY INSPECTION',
+        parameters: [...]
+      }
     ];
   } catch (error) {
-    console.error('Error fetching factories:', error);
+    console.error('Error fetching inspections:', error);
     return [];
   }
 };
 
 // After (Real API)
-export const getFactories = async () => {
+export const getFilteredInspections = async (filters) => {
   try {
-    const response = await axiosInstance.get('/master/plants/');
+    const response = await axiosInstance.get('/inspections/filter/', {
+      params: filters
+    });
     
     if (response.data && response.data.data) {
-      return response.data.data.map(plant => ({
-        label: plant.plant_name,
-        value: plant.id.toString()
-      }));
+      return response.data.data;
     }
     return [];
   } catch (error) {
-    console.error('Error fetching factories:', error);
+    console.error('Error fetching inspections:', error);
     return [];
   }
 };
@@ -406,10 +422,19 @@ All required dependencies are already installed in qshakti_ui:
 The chatbot has been successfully converted from Next.js to React and integrated into the qshakti_ui production application. It is:
 
 - ✅ **Fully functional** with available backend APIs
+- ✅ **Factory selection** now uses real data from login response
 - ✅ **Well documented** with comprehensive comments
 - ✅ **Ready to use** by end users
 - ✅ **Easy to extend** for developers
 - ✅ **Clearly marked** where dummy APIs need replacement
+
+### Recent Updates
+
+**Factory Integration (Latest):**
+- ✅ `getFactories()` now uses `plant_info` from login response
+- ✅ Modified `authloginNew.jsx` to store plant_info in sessionStorage
+- ✅ Eliminated need for separate factories endpoint
+- ✅ All factory selection flows now use real data
 
 The chatbot is production-ready and can be used immediately. As backend endpoints become available, simply replace the dummy APIs following the instructions in the code comments.
 

@@ -108,6 +108,8 @@ function Authlogin() {
 
       if (resultAction?.is_success === 1) {
         console.log("Login successful:", resultAction);
+        sessionStorage.setItem("token", resultAction?.data?.access);
+
         const roleData = resultAction?.data?.role;
         if (formData?.rememberMe) {
           sessionStorage.setItem("rememberedEmail", formData.email);

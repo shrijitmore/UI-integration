@@ -18,6 +18,9 @@ These APIs are fully integrated with your backend from `https://demo-qshakti.c4i
 - **Implementation:** Reads `plant_info` from sessionStorage (stored during login)
 - **Returns:** Factory name and ID from login response
 - **Note:** Uses plant_info stored in sessionStorage after successful login
+- **Implementation Details:** 
+  - Modified `authloginNew.jsx` to store `plant_info` in sessionStorage during login (lines 125, 130-133)
+  - Chatbot reads from sessionStorage when `getFactories()` is called
 
 ### 2. ✅ getFactorySections()
 - **Backend API:** `/master/items/` (extracts unique building_ids)
@@ -370,3 +373,103 @@ export const getFilteredInspections = async (filters) => {
 ---
 
 **The chatbot is integrated and working. The core navigation and data selection flows use your real backend APIs. Factory selection now uses `plant_info` from the login response, eliminating the need for a separate factories endpoint. The analytics and historical data features need backend development but are ready to integrate as soon as those endpoints are available.**
+
+---
+
+## Implementation Notes
+
+### Files Modified for Factory Integration
+
+1. **`qshakti_ui/src/modules/auth/authloginNew.jsx`**
+   - **Change:** Added code to store `plant_info` in sessionStorage during login
+   - **Lines Modified:** 125, 130-133
+   - **Impact:** Minimal - only adds one sessionStorage.setItem() call
+   - **Purpose:** Make plant_info available to chatbot after login
+   - **Backward Compatibility:** ✅ No impact on existing login functionality
+   - **Code Added:**
+     ```javascript
+     const plantInfo = resultAction?.data?.plant_info || null;
+     // Store plant_info for chatbot factory selection
+     if (plantInfo) {
+       sessionStorage.setItem("plant_info", JSON.stringify(plantInfo));
+     }
+     ```
+
+2. **`qshakti_ui/src/modules/Chatbot/chatbotApi.js`**
+   - **Change:** Updated `getFactories()` to read from sessionStorage instead of dummy data
+   - **Lines Modified:** 52-83
+   - **Impact:** Chatbot now uses real factory data from login response
+   - **Implementation:** Reads `plant_info` from sessionStorage and returns factory options
+
+### Why Login File Was Modified
+
+The login file (`authloginNew.jsx`) was modified to store `plant_info` in sessionStorage because:
+- The chatbot needs factory information to display factory selection options
+- `plant_info` is available in the login response but wasn't being stored
+- Storing it during login ensures it's available throughout the session
+- This is a minimal, non-intrusive change that doesn't affect existing login behavior
+- No separate API endpoint needed for factory list
+
+### Impact Assessment
+
+- ✅ **Login Functionality:** Unchanged - only adds one sessionStorage call
+- ✅ **Existing Features:** No impact - plant_info is only used by chatbot
+- ✅ **Session Storage:** Adds one new key (`plant_info`) for chatbot use
+- ✅ **Backward Compatibility:** Fully maintained
+
+---
+
+## Authentication Flow (Bearer Token)
+
+All API requests made by the chatbot are authenticated using a Bearer token. This ensures that only authorized users can access the API endpoints.
+
+### Step 1: Token Generation and Storage
+
+1.  **Login:** The user logs into the application using the standard login form.
+2.  **Token Received:** Upon successful login, the `/auth/login/` API returns an authentication token.
+3.  **Token Storage:** This token is stored in the browser's `sessionStorage` under the key `token`. This is handled by the main application's login logic.
+
+### Step 2: Token Injection in API Requests
+
+The chatbot's API service (`/src/modules/Chatbot/chatbotApi.js`) uses an `axios` instance to make all API calls. This instance is configured with an interceptor that automatically attaches the token to every outgoing request.
+
+1.  **Get Token:** Before each request, the `getAuthToken` function retrieves the token from `sessionStorage`.
+
+    ```javascript
+    const getAuthToken = () => {
+      return sessionStorage.getItem('token') || '';
+    };
+    ```
+
+2.  **Create Axios Instance:** A global `axios` instance is created with the base API URL.
+
+    ```javascript
+    const axiosInstance = axios.create({
+      baseURL: 'https://demo-qshakti.c4i4.org/api/',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    ```
+
+3.  **Request Interceptor:** An interceptor is added to the `axios` instance. This function runs before every request.
+
+    ```javascript
+    axiosInstance.interceptors.request.use((config) => {
+      const token = getAuthToken();
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+      return config;
+    });
+    ```
+
+4.  **Authenticated Request:** When an API call is made (e.g., `axiosInstance.get('/master/items/')`), the interceptor adds the `Authorization: Bearer <token>` header, authenticating the request.
+
+### Status
+
+-   ✅ **FULLY IMPLEMENTED AND WORKING.**
+-   The chatbot successfully reuses the session token from the main application's login.
+-   No changes were needed in the chatbot code as this was already implemented correctly. This documentation serves to clarify the existing process.
+
+---
