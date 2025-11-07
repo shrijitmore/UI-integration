@@ -51,17 +51,31 @@ axiosInstance.interceptors.request.use((config) => {
 
 /**
  * Get list of factories/plants
- * Note: Using dummy data as this endpoint might not be available in backend
- * Backend equivalent: Would be /master/plants/ or similar
+ * Uses plant_info from login response stored in sessionStorage
+ * Backend API: /auth/login/ (plant_info in response)
  * @returns {Promise<Array>} Array of factory options
  */
 export const getFactories = async () => {
   try {
-    // DUMMY API - Replace with actual backend endpoint when available
-    // For now, returning static data based on backend structure
+    // Get plant_info from sessionStorage (stored during login)
+    const plantInfoStr = sessionStorage.getItem('plant_info');
+    
+    if (plantInfoStr) {
+      const plantInfo = JSON.parse(plantInfoStr);
+      
+      if (plantInfo && plantInfo.plant_id && plantInfo.plant_name) {
     return [
-      { label: 'AMMUNITION FACTORY KHADKI', value: '1' },
+          {
+            label: plantInfo.plant_name,
+            value: plantInfo.plant_id.toString()
+          }
     ];
+      }
+    }
+    
+    // Fallback: Return empty array if plant_info not found
+    console.warn('Plant info not found in sessionStorage. User may need to login again.');
+    return [];
   } catch (error) {
     console.error('Error fetching factories:', error);
     return [];

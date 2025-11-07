@@ -16,6 +16,7 @@ import PrecisionManufacturingIcon from "@mui/icons-material/PrecisionManufacturi
 import LogoutIcon from "@mui/icons-material/Logout";
 import ArrowRightAltIcon from "@mui/icons-material/ArrowRightAlt";
 import SummarizeIcon from "@mui/icons-material/Summarize";
+import SmartToyIcon from "@mui/icons-material/SmartToy";
 
 import {
   CardBox,
@@ -146,51 +147,87 @@ const ModulePage = () => {
 
       <StyledList>
         {filteredCards.length > 0 ? (
-          filteredCards.map((card, index) => (
-            <CardBox
-              key={index}
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: index * 0.1, type: "spring" }}
-              onClick={() => {
-                dispatch(setSelectedModule(card.title));
+          <>
+            {filteredCards.map((card, index) => (
+              <CardBox
+                key={index}
+                initial={{ opacity: 0, x: -50 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: index * 0.1, type: "spring" }}
+                onClick={() => {
+                  dispatch(setSelectedModule(card.title));
 
-                let routeToNavigate = null;
+                  let routeToNavigate = null;
 
-                if (isAdmin) {
-                  routeToNavigate = card.adminRoute;
-                } else {
-                  // Step 1: Check if the user has access to either "rm" or "production"
-                  const priorityScreens = ["rm", "production"];
-                  const hasPriorityAccess = priorityScreens.some((screen) =>
-                    permissions.some(
-                      (perm) => perm.screen === screen && perm.view
-                    )
-                  );
-
-                  if (hasPriorityAccess) {
-                    // Navigate to default route if rm or production is accessible
-                    routeToNavigate = card.userRoute;
+                  if (isAdmin) {
+                    routeToNavigate = card.adminRoute;
                   } else {
-                    // Step 2: Find the first accessible screen from the full list
-                    const accessibleScreen = card.screen.find((screenName) =>
+                    // Step 1: Check if the user has access to either "rm" or "production"
+                    const priorityScreens = ["rm", "production"];
+                    const hasPriorityAccess = priorityScreens.some((screen) =>
                       permissions.some(
-                        (perm) => perm.screen === screenName && perm.view
+                        (perm) => perm.screen === screen && perm.view
                       )
                     );
 
-                    if (accessibleScreen) {
-                      routeToNavigate = `/${accessibleScreen.toLowerCase()}`;
+                    if (hasPriorityAccess) {
+                      // Navigate to default route if rm or production is accessible
+                      routeToNavigate = card.userRoute;
+                    } else {
+                      // Step 2: Find the first accessible screen from the full list
+                      const accessibleScreen = card.screen.find((screenName) =>
+                        permissions.some(
+                          (perm) => perm.screen === screenName && perm.view
+                        )
+                      );
+
+                      if (accessibleScreen) {
+                        routeToNavigate = `/${accessibleScreen.toLowerCase()}`;
+                      }
                     }
                   }
-                }
 
-                if (routeToNavigate) {
-                  localStorage.setItem("lastVisitedRoute", routeToNavigate);
-                  navigate(routeToNavigate);
-                } else {
-                  showToast("You do not have access to this module.", "error");
-                }
+                  if (routeToNavigate) {
+                    localStorage.setItem("lastVisitedRoute", routeToNavigate);
+                    navigate(routeToNavigate);
+                  } else {
+                    showToast("You do not have access to this module.", "error");
+                  }
+                }}
+              >
+                <ArrowRightAltIcon
+                  className="arrow-icon"
+                  sx={{
+                    position: "absolute",
+                    left: -30,
+                    color: "white",
+                    opacity: 0,
+                    fontSize: 28,
+                    transition: "all 0.3s ease",
+                    transform: "translateX(-10px)",
+                    pointerEvents: "none",
+                  }}
+                />
+                <IconWrapper>{card.icon}</IconWrapper>
+                <ListItemText
+                  primary={
+                    <Typography variant="subtitle1" fontWeight={600}>
+                      {card.title}
+                    </Typography>
+                  }
+                />
+              </CardBox>
+            ))}
+            {/* Chatbot Card - Always visible */}
+            <CardBox
+              key="chatbot"
+              initial={{ opacity: 0, x: -50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: filteredCards.length * 0.1, type: "spring" }}
+              onClick={() => {
+                dispatch(setSelectedModule("Quality Insights Chatbot"));
+                localStorage.setItem("lastVisitedRoute", "/chatbot");
+                navigate("/chatbot");
               }}
             >
               <ArrowRightAltIcon
@@ -206,35 +243,75 @@ const ModulePage = () => {
                   pointerEvents: "none",
                 }}
               />
-              <IconWrapper>{card.icon}</IconWrapper>
+              <IconWrapper>
+                <SmartToyIcon />
+              </IconWrapper>
               <ListItemText
                 primary={
                   <Typography variant="subtitle1" fontWeight={600}>
-                    {card.title}
+                    Quality Insights Chatbot
                   </Typography>
                 }
               />
             </CardBox>
-          ))
+          </>
         ) : (
-          <Box
-            sx={{
-              padding: 4,
-              backgroundColor: "rgba(255, 255, 255, 0.15)",
-              borderRadius: 3,
-              color: "white",
-              textAlign: "center",
-              backdropFilter: "blur(10px)",
-              mt: 4,
-            }}
-          >
-            <Typography variant="h6" gutterBottom>
-              Access Denied!
-            </Typography>
-            <Typography variant="body1">
-              Please contact the Administrator for access.
-            </Typography>
-          </Box>
+          <>
+            <Box
+              sx={{
+                padding: 4,
+                backgroundColor: "rgba(255, 255, 255, 0.15)",
+                borderRadius: 3,
+                color: "white",
+                textAlign: "center",
+                backdropFilter: "blur(10px)",
+                mt: 4,
+              }}
+            >
+              <Typography variant="h6" gutterBottom>
+                Access Denied!
+              </Typography>
+              <Typography variant="body1">
+                Please contact the Administrator for access.
+              </Typography>
+            </Box>
+            {/* Chatbot Card - Always visible even when no other cards */}
+            <CardBox
+              key="chatbot"
+              initial={{ opacity: 0, x: -50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.1, type: "spring" }}
+              onClick={() => {
+                dispatch(setSelectedModule("Quality Insights Chatbot"));
+                localStorage.setItem("lastVisitedRoute", "/chatbot");
+                navigate("/chatbot");
+              }}
+            >
+              <ArrowRightAltIcon
+                className="arrow-icon"
+                sx={{
+                  position: "absolute",
+                  left: -30,
+                  color: "white",
+                  opacity: 0,
+                  fontSize: 28,
+                  transition: "all 0.3s ease",
+                  transform: "translateX(-10px)",
+                  pointerEvents: "none",
+                }}
+              />
+              <IconWrapper>
+                <SmartToyIcon />
+              </IconWrapper>
+              <ListItemText
+                primary={
+                  <Typography variant="subtitle1" fontWeight={600}>
+                    Quality Insights Chatbot
+                  </Typography>
+                }
+              />
+            </CardBox>
+          </>
         )}
       </StyledList>
     </DashboardContainer>

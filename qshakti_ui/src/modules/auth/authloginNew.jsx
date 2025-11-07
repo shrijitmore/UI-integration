@@ -122,10 +122,15 @@ function Authlogin() {
         const role = roleData?.name ?? null;
         const roleId = roleData?.id ?? null;
         const plant = resultAction?.data?.plant_info?.plant_id || null;
+        const plantInfo = resultAction?.data?.plant_info || null;
 
         sessionStorage.setItem("role", role);
         sessionStorage.setItem("role_id", roleId);
         sessionStorage.setItem("isAuthenticated", "true");
+        // Store plant_info for chatbot factory selection
+        if (plantInfo) {
+          sessionStorage.setItem("plant_info", JSON.stringify(plantInfo));
+        }
         const permissionRes = await dispatch(
           getPermissionList({ role, plant })
         ).unwrap();

@@ -2,8 +2,8 @@
 
 ## Summary
 
-**✅ Successfully Integrated:** 6 out of 11 API functions
-**⚠️ Using Dummy Data:** 5 API functions (need backend endpoints)
+**✅ Successfully Integrated:** 7 out of 11 API functions
+**⚠️ Using Dummy Data:** 4 API functions (need backend endpoints)
 
 ---
 
@@ -11,50 +11,58 @@
 
 These APIs are fully integrated with your backend from `https://demo-qshakti.c4i4.org/api`:
 
-### 1. ✅ getFactorySections()
+### 1. ✅ getFactories()
+- **Backend API:** `/auth/login/` (plant_info in response)
+- **Status:** Working with real backend data from login response
+- **Used For:** Getting factory/plant information for chatbot
+- **Implementation:** Reads `plant_info` from sessionStorage (stored during login)
+- **Returns:** Factory name and ID from login response
+- **Note:** Uses plant_info stored in sessionStorage after successful login
+
+### 2. ✅ getFactorySections()
 - **Backend API:** `/master/items/` (extracts unique building_ids)
 - **Status:** Working with real backend data
 - **Used For:** Getting sections/buildings for factory selection
 - **Fallback:** Returns dummy sections if API fails
 
-### 2. ✅ getItems()
+### 3. ✅ getItems()
 - **Backend API:** `/master/items/`
 - **Status:** Working with real backend data
 - **Used For:** Getting item codes filtered by factory and section
 - **Returns:** Item code + description from backend
 
-### 3. ✅ getPurchaseOrders()
+### 4. ✅ getPurchaseOrders()
 - **Backend API:** `/master/po_no_dropdown/`
 - **Status:** Working with real backend data
 - **Used For:** Getting PO numbers for selection
 - **Filters:** By section and optional item code
 
-### 4. ✅ getPurchaseOrderStatus()
+### 5. ✅ getPurchaseOrderStatus()
 - **Backend API:** `/master/production_planner/list/`
 - **Status:** Working with real backend data
 - **Used For:** Getting detailed PO status information
 - **Returns:** Order number, lot number, quantity, status, dates, etc.
 
-### 5. ✅ getOperations()
+### 6. ✅ getOperations()
 - **Backend API:** `/master/production_planner/list/` + `/master/order-details/:id/operation_details/`
 - **Status:** Working with real backend data
 - **Used For:** Getting operations for selected item
 - **Fallback:** Returns dummy operation if no data found
 
-### 6. ✅ getParameters()
+### 7. ✅ getParameters()
 - **Backend API:** `/master/production_planner/list/` + `/master/order-details/:id/operation_details/`
 - **Status:** Working with real backend data
 - **Used For:** Getting inspection parameters for operation
 - **Returns:** Parameter name + description from inspection_parameter object
 - **Fallback:** Returns dummy parameters if no data found
 
-### 7. ✅ getIONumbers() [Bonus - Not in original plan]
+### 8. ✅ getIONumbers() [Bonus - Not in original plan]
 - **Backend API:** `/master/io_no_dropdown/`
 - **Status:** Working with real backend data
 - **Used For:** RM inspection IO number selection
 - **Note:** Ready to use but not yet integrated in UI flow
 
-### 8. ✅ getFAIPONumbers() [Bonus - Not in original plan]
+### 9. ✅ getFAIPONumbers() [Bonus - Not in original plan]
 - **Backend API:** `/master/fai_po_no_dropdown/`
 - **Status:** Working with real backend data
 - **Used For:** FAI inspection PO number selection
@@ -66,29 +74,7 @@ These APIs are fully integrated with your backend from `https://demo-qshakti.c4i
 
 These APIs use dummy/mock data because the backend endpoints don't exist yet:
 
-### 1. ⚠️ getFactories()
-**Current Implementation:**
-```javascript
-return [
-  { label: 'AMMUNITION FACTORY KHADKI', value: '1' },
-];
-```
-
-**Why Dummy:** 
-- Your newdata.txt doesn't include a plants/factories list endpoint
-- Profile API shows plant_info but no list endpoint
-
-**Backend Needed:** 
-- Endpoint like `/master/plants/` or `/master/factories/`
-- Should return array of factories with id and name
-
-**Impact:** 
-- Works fine with single factory
-- Need to add this endpoint for multi-factory support
-
----
-
-### 2. ⚠️ getFilteredInspections()
+### 1. ⚠️ getFilteredInspections()
 **Current Implementation:**
 ```javascript
 return [
@@ -115,7 +101,7 @@ return [
 
 ---
 
-### 3. ⚠️ getParameterSeriesAndStats()
+### 2. ⚠️ getParameterSeriesAndStats()
 **Current Implementation:**
 ```javascript
 // Generates dummy time-series data
@@ -146,7 +132,7 @@ for (let i = 10; i >= 0; i--) {
 
 ---
 
-### 4. ⚠️ getLSLUSLDistribution()
+### 3. ⚠️ getLSLUSLDistribution()
 **Current Implementation:**
 ```javascript
 return {
@@ -204,13 +190,13 @@ return {
 
 ### 🟢 Feature: PO Status Query
 **Status:** ✅ FULLY WORKING
-- ✅ Factory selection (using dummy data)
+- ✅ Factory selection (using plant_info from login response)
 - ✅ PO selection (using backend)
 - ✅ PO details display (using backend)
 
 ### 🟡 Feature: Inspection Details
 **Status:** ⚠️ PARTIALLY WORKING
-- ✅ Factory selection (using dummy data)
+- ✅ Factory selection (using plant_info from login response)
 - ✅ Section selection (using backend)
 - ✅ Item selection (using backend)
 - ✅ PO selection (using backend)
@@ -218,7 +204,7 @@ return {
 
 ### 🟡 Feature: Parameter Analysis
 **Status:** ⚠️ PARTIALLY WORKING
-- ✅ Factory selection (using dummy data)
+- ✅ Factory selection (using plant_info from login response)
 - ✅ Section selection (using backend)
 - ✅ Item selection (using backend)
 - ✅ Operation selection (using backend)
@@ -229,7 +215,7 @@ return {
 
 ### 🟡 Feature: Parameter Distribution
 **Status:** ⚠️ PARTIALLY WORKING
-- ✅ Factory selection (using dummy data)
+- ✅ Factory selection (using plant_info from login response)
 - ✅ Section selection (using backend)
 - ✅ Item selection (using backend)
 - ⚠️ Distribution stats (using dummy data) ← NEEDS BACKEND
@@ -248,37 +234,43 @@ Search for `// DUMMY API`
 
 ### Step 3: Replace Implementation
 ```javascript
+// Example: Replacing getFilteredInspections() (still a dummy API)
 // BEFORE (Dummy)
-export const getFactories = async () => {
+export const getFilteredInspections = async (filters) => {
   try {
-    // DUMMY API - Replace with actual backend endpoint when available
+    // DUMMY DATA - Replace with actual backend endpoint when available
     return [
-      { label: 'AMMUNITION FACTORY KHADKI', value: '1' },
+      {
+        id: 'INS-001',
+        operationName: 'QUALITY INSPECTION',
+        parameters: [...]
+      }
     ];
   } catch (error) {
-    console.error('Error fetching factories:', error);
+    console.error('Error fetching inspections:', error);
     return [];
   }
 };
 
 // AFTER (Real)
-export const getFactories = async () => {
+export const getFilteredInspections = async (filters) => {
   try {
-    const response = await axiosInstance.get('/master/plants/');
+    const response = await axiosInstance.get('/inspections/filter/', {
+      params: filters
+    });
     
     if (response.data && response.data.data) {
-      return response.data.data.map(plant => ({
-        label: plant.plant_name,
-        value: plant.id.toString()
-      }));
+      return response.data.data;
     }
     return [];
   } catch (error) {
-    console.error('Error fetching factories:', error);
+    console.error('Error fetching inspections:', error);
     return [];
   }
 };
 ```
+
+**Note:** `getFactories()` has already been implemented using `plant_info` from the login response. No separate endpoint needed.
 
 ### Step 4: Test
 - Make API call
@@ -322,10 +314,10 @@ export const getFactories = async () => {
 
 ## RECOMMENDATIONS
 
-### Priority 1: Factory List Endpoint
-**Create:** `/master/plants/` or `/master/factories/`
-**Returns:** List of factories with id and name
-**Benefit:** Remove last hardcoded dummy data in selection flow
+### Priority 1: Factory List Endpoint (COMPLETED ✅)
+**Status:** ✅ **IMPLEMENTED** - Using `plant_info` from `/auth/login/` response
+**Implementation:** `plant_info` is stored in sessionStorage during login and retrieved by chatbot
+**Benefit:** Factory selection now uses real data from login response
 
 ### Priority 2: Inspection Records Endpoint
 **Create:** `/inspections/filter/`
@@ -351,13 +343,14 @@ export const getFactories = async () => {
 
 ### What's Working:
 ✅ **Core functionality is working** with your backend APIs
-✅ **6 out of 11 API functions** use real backend data
-✅ **All selection flows** (sections, items, POs, operations, parameters) work
+✅ **7 out of 11 API functions** use real backend data
+✅ **Factory selection** now uses `plant_info` from login response
+✅ **All selection flows** (factories, sections, items, POs, operations, parameters) work
 ✅ **PO status queries** work end-to-end
 ✅ **Authentication** works with session tokens
 
 ### What Needs Backend:
-⚠️ **5 API functions** need backend endpoints
+⚠️ **4 API functions** need backend endpoints
 ⚠️ **Historical/time-series data** not available yet
 ⚠️ **Inspection records** not available yet
 ⚠️ **Distribution analysis** not available yet
@@ -376,4 +369,4 @@ export const getFactories = async () => {
 
 ---
 
-**The chatbot is integrated and working. The core navigation and data selection flows use your real backend APIs. The analytics and historical data features need backend development but are ready to integrate as soon as those endpoints are available.**
+**The chatbot is integrated and working. The core navigation and data selection flows use your real backend APIs. Factory selection now uses `plant_info` from the login response, eliminating the need for a separate factories endpoint. The analytics and historical data features need backend development but are ready to integrate as soon as those endpoints are available.**

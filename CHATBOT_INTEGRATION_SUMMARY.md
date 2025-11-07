@@ -68,12 +68,14 @@ Successfully converted Next.js chatbot from `/app/React trial` to React and inte
 
 #### Dummy APIs (Placeholders for Future Backend Development)
 ```javascript
-⚠️ getFactories()                    - Factory list (static data)
+✅ getFactories()                    - Factory list (uses plant_info from login response)
 ⚠️ getFilteredInspections()          - Inspection records
 ⚠️ getParameterSeriesAndStats()      - Time-series parameter data
 ⚠️ getLSLUSLDistribution()           - Distribution analysis
 ⚠️ getParameterDistribution()        - Parameter statistics
 ```
+
+**Note:** `getFactories()` now uses `plant_info` from the login response (`/auth/login/`). The `plant_info` object (containing `plant_id` and `plant_name`) is stored in sessionStorage during login and retrieved by the chatbot.
 
 **Note**: All dummy APIs are clearly marked in code with `// DUMMY API` comments and include instructions for replacement.
 

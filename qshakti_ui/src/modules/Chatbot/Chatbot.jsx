@@ -24,6 +24,7 @@ const Chatbot = () => {
         display: 'flex',
         flexDirection: 'column',
         bgcolor: 'background.default',
+        overflow: 'hidden', // Prevent page scrolling
       }}
     >
       {/* Header Section */}

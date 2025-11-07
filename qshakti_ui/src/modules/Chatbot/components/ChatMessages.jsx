@@ -5,9 +5,21 @@
  */
 
 import React, { useEffect, useRef } from 'react';
-import { Box, CircularProgress } from '@mui/material';
+import { Box, keyframes } from '@mui/material';
 import ChatAvatar from './ChatAvatar';
 import BotCard from './BotCard';
+
+// Typing animation keyframes
+const typingDot = keyframes`
+  0%, 60%, 100% {
+    transform: translateY(0);
+    opacity: 0.7;
+  }
+  30% {
+    transform: translateY(-10px);
+    opacity: 1;
+  }
+`;
 
 /**
  * ChatMessages component - renders all messages in the chat
@@ -37,6 +49,7 @@ const ChatMessages = ({ messages, isBotTyping, className }) => {
         overflowY: 'auto',
         overflowX: 'hidden',
         bgcolor: 'background.default',
+        position: 'relative',
         // Custom scrollbar styling
         '&::-webkit-scrollbar': {
           width: '8px',
@@ -108,10 +121,30 @@ const ChatMessages = ({ messages, isBotTyping, className }) => {
             >
               <ChatAvatar role="bot" />
               <BotCard>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, p: 1 }}>
-                  <CircularProgress size={12} />
-                  <CircularProgress size={12} sx={{ animationDelay: '0.15s' }} />
-                  <CircularProgress size={12} sx={{ animationDelay: '0.3s' }} />
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 0.5,
+                    px: 2,
+                    py: 1.5,
+                  }}
+                >
+                  {/* Animated typing dots */}
+                  {[0, 1, 2].map((index) => (
+                    <Box
+                      key={index}
+                      sx={{
+                        width: 10,
+                        height: 10,
+                        borderRadius: '50%',
+                        bgcolor: 'primary.main',
+                        animation: `${typingDot} 1.4s infinite ease-in-out`,
+                        animationDelay: `${index * 0.2}s`,
+                        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                      }}
+                    />
+                  ))}
                 </Box>
               </BotCard>
             </Box>

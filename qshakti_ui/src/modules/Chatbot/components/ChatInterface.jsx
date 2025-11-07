@@ -147,25 +147,26 @@ const ChatInterface = () => {
           addBotMessage(
             'Welcome! Unable to load factories from database. Please check your connection.',
             MAIN_OPTIONS,
-            handleMainOptionSelect
+            handleMainOptionSelect,
+            () => setIsBotTyping(false)
           );
         } else {
           addBotMessage(
             'Welcome to the Quality Insights Chatbot! How can I assist you today?',
             MAIN_OPTIONS,
-            handleMainOptionSelect
+            handleMainOptionSelect,
+            () => setIsBotTyping(false)
           );
         }
-        setIsBotTyping(false);
       })
       .catch((error) => {
         console.error('[ChatInterface] Error loading factories:', error);
         addBotMessage(
           `Error: ${error instanceof Error ? error.message : 'Failed to load factories'}. Please check your connection.`,
           MAIN_OPTIONS,
-          handleMainOptionSelect
+          handleMainOptionSelect,
+          () => setIsBotTyping(false)
         );
-        setIsBotTyping(false);
       });
   }, []);
 
@@ -178,58 +179,69 @@ const ChatInterface = () => {
 
   /**
    * Add a bot message with optional options
+   * @param {string} text - Message text
+   * @param {Array} options - Optional array of options
+   * @param {Function} handler - Optional handler for option selection
+   * @param {Function} onComplete - Optional callback called after message is added (after delay)
    */
-  const addBotMessage = (text, options = null, handler = null) => {
+  const addBotMessage = (text, options = null, handler = null, onComplete = null) => {
     console.log('[addBotMessage] Called with:', {
       text,
       optionsCount: options?.length || 0,
       hasHandler: !!handler,
     });
 
-    // Check if all options are numeric and short
-    const isNumericOptions = options?.every((opt) => {
-      const val = opt.value.toString();
-      return /^\d{1,5}$/.test(val) || /^[A-Z]-\d{1,4}$/.test(val);
-    });
+    // Add 2 second delay before showing the message
+    setTimeout(() => {
+      // Check if all options are numeric and short
+      const isNumericOptions = options?.every((opt) => {
+        const val = opt.value.toString();
+        return /^\d{1,5}$/.test(val) || /^[A-Z]-\d{1,4}$/.test(val);
+      });
 
-    const content = (
-      <div>
-        <p style={{ marginBottom: '16px' }}>{text}</p>
-        {options && handler && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            {/* Show text input for numeric options */}
-            {isNumericOptions && (
-              <NumericInput
-                options={options}
-                onSubmit={handler}
-                onError={(msg) => setErrorMessage(msg)}
-              />
-            )}
-            {/* Always show option buttons */}
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-              {options.length > 0 ? (
-                options.map((opt) => (
-                  <Button
-                    key={opt.value}
-                    variant="outlined"
-                    size="small"
-                    onClick={() => handler(opt)}
-                    data-testid={`option-${opt.value}`}
-                  >
-                    {opt.label}
-                  </Button>
-                ))
-              ) : (
-                <p style={{ fontSize: '0.875rem', color: 'text.secondary' }}>
-                  No options available
-                </p>
+      const content = (
+        <div>
+          <p style={{ marginBottom: '16px' }}>{text}</p>
+          {options && handler && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              {/* Show text input for numeric options */}
+              {isNumericOptions && (
+                <NumericInput
+                  options={options}
+                  onSubmit={handler}
+                  onError={(msg) => setErrorMessage(msg)}
+                />
               )}
+              {/* Always show option buttons */}
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                {options.length > 0 ? (
+                  options.map((opt) => (
+                    <Button
+                      key={opt.value}
+                      variant="outlined"
+                      size="small"
+                      onClick={() => handler(opt)}
+                      data-testid={`option-${opt.value}`}
+                    >
+                      {opt.label}
+                    </Button>
+                  ))
+                ) : (
+                  <p style={{ fontSize: '0.875rem', color: 'text.secondary' }}>
+                    No options available
+                  </p>
+                )}
+              </div>
             </div>
-          </div>
-        )}
-      </div>
-    );
-    addMessage('bot', content);
+          )}
+        </div>
+      );
+      addMessage('bot', content);
+      // Call onComplete callback after message is added
+      if (onComplete) {
+        onComplete();
+      }
+    }, 2000); // 2 second delay
   };
 
   /**
@@ -257,9 +269,9 @@ const ChatInterface = () => {
       addBotMessage(
         'Error: Factories not loaded yet. Please wait a moment and try again.',
         MAIN_OPTIONS,
-        handleMainOptionSelect
+        handleMainOptionSelect,
+        () => setIsBotTyping(false)
       );
-      setIsBotTyping(false);
       return;
     }
 
@@ -274,9 +286,9 @@ const ChatInterface = () => {
       addBotMessage(
         `Let's retrieve ${inspectionType} inspection details. First, please select a factory:`,
         currentFactories,
-        (opt) => handleInspectionDetails(CONVERSATION_STEPS.INSPECTION_SELECT_FACTORY, opt)
+        (opt) => handleInspectionDetails(CONVERSATION_STEPS.INSPECTION_SELECT_FACTORY, opt),
+        () => setIsBotTyping(false)
       );
-      setIsBotTyping(false);
       return;
     }
 
@@ -287,7 +299,8 @@ const ChatInterface = () => {
         addBotMessage(
           'Select the factory for which you want to see PO number status.',
           currentFactories,
-          (opt) => handlePoStatus(CONVERSATION_STEPS.PO_STATUS_SELECT_FACTORY, opt)
+          (opt) => handlePoStatus(CONVERSATION_STEPS.PO_STATUS_SELECT_FACTORY, opt),
+          () => setIsBotTyping(false)
         );
         break;
 
@@ -296,7 +309,8 @@ const ChatInterface = () => {
         addBotMessage(
           'For parameter analysis, first select a factory:',
           currentFactories,
-          (opt) => handleParamAnalysis(CONVERSATION_STEPS.PARAM_ANALYSIS_SELECT_FACTORY, opt)
+          (opt) => handleParamAnalysis(CONVERSATION_STEPS.PARAM_ANALYSIS_SELECT_FACTORY, opt),
+          () => setIsBotTyping(false)
         );
         break;
 
@@ -310,14 +324,14 @@ const ChatInterface = () => {
         addBotMessage(
           'Select the context for distribution:',
           contexts,
-          (opt) => handleParamDistribution(CONVERSATION_STEPS.PARAM_DIST_SELECT_CONTEXT, opt)
+          (opt) => handleParamDistribution(CONVERSATION_STEPS.PARAM_DIST_SELECT_CONTEXT, opt),
+          () => setIsBotTyping(false)
         );
         break;
 
       default:
         break;
     }
-    setIsBotTyping(false);
   };
 
   /**
@@ -843,25 +857,25 @@ const ChatInterface = () => {
       addBotMessage(
         'Is there anything else I can help you with?',
         MAIN_OPTIONS,
-        handleMainOptionSelect
+        handleMainOptionSelect,
+        () => setIsBotTyping(false)
       );
-      setIsBotTyping(false);
     }, 1000);
   };
 
   return (
-    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       {/* Error message display */}
       {errorMessage && (
-        <Box sx={{ p: 2 }}>
+        <Box sx={{ p: 2, flexShrink: 0 }}>
           <Alert severity="error" onClose={() => setErrorMessage('')}>
             {errorMessage}
           </Alert>
         </Box>
       )}
 
-      {/* Chat messages area */}
-      <Box sx={{ flex: 1, overflow: 'hidden' }}>
+      {/* Chat messages area - only this should scroll */}
+      <Box sx={{ flex: 1, overflow: 'hidden', minHeight: 0 }}>
         <ChatMessages messages={messages} isBotTyping={isBotTyping} />
       </Box>
     </Box>
