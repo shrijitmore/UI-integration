@@ -219,10 +219,6 @@ export const Routingdata = [
   {
     path: "chatbot",
     element: <Chatbot />,
-    permission: {
-      screens: "chatbot",
-      action: "view",
-    },
   },
   { path: "*", element: <Error404 /> },
 ];
